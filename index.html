@@ -79,8 +79,8 @@
           scene.add(earth)
           const earthObjects = []
 
-          let earthGeometry = new THREE.SphereGeometry(12,12,12)
-          // let earthGeometry = new THREE.DodecahedronGeometry(12,1)
+          // let earthGeometry = new THREE.SphereGeometry(12,12,12)
+          let earthGeometry = new THREE.DodecahedronGeometry(12,1)
           earthGeometry.deleteAttribute( 'normal' );
           earthGeometry.deleteAttribute( 'uv' );
 
@@ -111,46 +111,22 @@
           earth.add(earthMesh)
 
           //线组
-          class AxisGridHelper {
-            constructor(node, units = 10) {
-              const axes = new THREE.AxesHelper();
-              axes.material.depthTest = false;
-              axes.renderOrder = 2; // 在网格渲染之后再渲染
-              node.add(axes);
-
-              const grid = new THREE.GridHelper(units, units);
-              grid.material.depthTest = false;
-              grid.renderOrder = 1;
-              node.add(grid);
-
-              this.grid = grid;
-              this.axes = axes;
-              this.visible = false;
-            }
-            get visible() {
-              return this._visible;
-            }
-            set visible(v) {
-              this._visible = v;
-              this.grid.visible = v;
-              this.axes.visible = v;
-            }
-          }
           const arrowMesh = new THREE.Object3D()
-          arrowMesh.position.set(0,-40,20)
+          arrowMesh.position.set(-10,-10,20)
           arrowMesh.add(new THREE.AxisHelper(20))
           scene.add(arrowMesh)
-          const dir = new THREE.Vector3( 1, 2, 0 );
 
-          //normalize the direction vector (convert to vector of length 1)
-          dir.normalize();
-
-          const origin = new THREE.Vector3( 0, 0, 0 );
-          const length = 10;
+          const length = 5;
           const hex = 0x01fcff;
+          const arrowArrayOrigin = [[]]//todo
+          for(let i = 0;i <= 10;i++){
+            let origin = new THREE.Vector3().random().multiplyScalar(10);
+            let dir = origin.clone().add(new THREE.Vector3(origin.x,origin.y*2,origin.z))
 
-          const arrowHelper = new THREE.ArrowHelper( dir, origin, length, hex );
-          scene.add( arrowHelper );
+            const arrowHelper = new THREE.ArrowHelper( dir, origin, length, hex );
+            arrowMesh.add( arrowHelper );
+          }
+
 
 
           //animation
