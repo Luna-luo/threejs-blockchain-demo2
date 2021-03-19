@@ -32,7 +32,7 @@
           scene = new THREE.Scene();
           scene.background = new THREE.Color(0xebebeb);
           camera = new THREE.PerspectiveCamera( 60, aspect, 0.1, 1000 );
-          camera.position.set(-10,10,50)
+          camera.position.set(-10,10,70)
 
           renderer = new THREE.WebGLRenderer({antialias: true,});
           renderer.setSize( window.innerWidth, window.innerHeight);
@@ -111,25 +111,69 @@
           earth.add(earthMesh)
 
           //线组
+          function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min)) + min; //不含最大值，含最小值
+          }
           const arrowMesh = new THREE.Object3D()
-          arrowMesh.position.set(-10,-10,20)
+          arrowMesh.position.set(0,-25,0)
           arrowMesh.add(new THREE.AxisHelper(20))
           scene.add(arrowMesh)
 
-          const length = 5;
+          //线组一（最底下的线组）
           const hex = 0x01fcff;
-          const arrowArrayOrigin = [[]]//todo
-          for(let i = 0;i <= 10;i++){
-            let origin = new THREE.Vector3().random().multiplyScalar(10);
-            let dir = origin.clone().add(new THREE.Vector3(origin.x,origin.y*2,origin.z))
+          for(let i = -10;i <= 10;i++){
+            let positionX = getRandomInt(-12,15)
+            let positionY = getRandomInt(-5,5)
+            let positionZ = getRandomInt(-8,8)
+            let length = getRandomInt(4,18)
+            let origin = new THREE.Vector3(positionX,positionY,positionZ)
+            let dir = origin.clone().add(new THREE.Vector3(origin.x,10,origin.z))
 
             const arrowHelper = new THREE.ArrowHelper( dir, origin, length, hex );
+            console.log(arrowHelper)
             arrowMesh.add( arrowHelper );
+          }
+
+          //线组二（最上面的线组）
+          const upArrowMesh = new THREE.Object3D()
+          upArrowMesh.position.set(0,5,0)
+          upArrowMesh.add(new THREE.AxisHelper(20))
+          scene.add(upArrowMesh)
+
+          for(let i = 0;i <= 10;i++){
+            let positionX = getRandomInt(-12,15)
+            let positionY = getRandomInt(-5,5)
+            let positionZ = getRandomInt(-8,8)
+            let length = getRandomInt(4,18)
+            let origin = new THREE.Vector3(positionX,positionY,positionZ)
+            let dir = origin.clone().add(new THREE.Vector3(origin.x,10,origin.z))
+
+            const arrowHelper = new THREE.ArrowHelper( dir, origin, length, hex );
+            console.log(arrowHelper)
+            upArrowMesh.add( arrowHelper );
           }
 
 
 
-          //animation
+
+          //底下的圆盘
+          const circleGeometry = new THREE.CircleGeometry( 16, 32 );
+          const material = new THREE.MeshBasicMaterial( { color: 0xB9CFDF } );
+          const circle = new THREE.Mesh( circleGeometry, material );
+          circle.rotation.x = -Math.PI*.5
+          arrowMesh.add( circle );
+
+          //上面的圆盘
+          const upCircle = new THREE.Mesh( circleGeometry, material );
+          upCircle.position.set(0,17,0)
+          upCircle.rotation.x = -Math.PI*.4
+          console.log('upCircle',upCircle)
+          upArrowMesh.add( upCircle );
+
+
+          //blcok animation
           const times = [0,2];
           const liftValues = [-40, 0];
           const liftTrack1 = new THREE.KeyframeTrack(
@@ -157,7 +201,7 @@
 
           const animate = function(){
             requestAnimationFrame(animate);
-            // earth.rotation.z -= 0.03;
+            earth.rotation.z -= 0.03;
 
             renderer.render(scene, camera);
             mixer.update(clock.getDelta());
